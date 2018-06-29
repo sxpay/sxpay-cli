@@ -1,0 +1,27 @@
+{
+  "name": "sxpay-cli",
+  "version": "0.0.1",
+  "description": "A simple CLI for creating your projects",
+  "main": "bin/sxpay",
+  "repository": {
+    "type": "git",
+    "url": "http://39.107.12.15/front/sxpay-cli.git"
+  },
+  "keywords": [
+    "sxpay",
+    "vue",
+    "react"
+  ],
+  "author": "sxpay",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "cli-table": "^0.3.1",
+    "commander": "^2.15.1",
+    "download-git-repo": "^1.0.2",
+    "handlebars": "^4.0.11",
+    "inquirer": "^6.0.0",
+    "metalsmith": "^2.3.0",
+    "ora": "^2.1.0"
+  }
+}
