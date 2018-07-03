@@ -11,7 +11,7 @@ module.exports = function listTable(tplList, name, lyric) {
   const list = Object.keys(tplList)
   if (list.length) {
     list.forEach((key, index) => {
-      table.push([index + 1, name, tplList[key]])
+      table.push([index + 1, tplList[key].split('-')[0], tplList[key]])
       if (table.length === list.length) {
         console.log(table.toString())
         if (lyric) {

@@ -1,5 +1,5 @@
-const { listTable } = require(`${__dirname}/../utils`)
+const listTable = require(`../utils/listTable`)
 
-let tplList = require(`${__dirname}/../templates`)
+let tplList = require(`../templates`)
 
 module.exports = listTable(tplList)
