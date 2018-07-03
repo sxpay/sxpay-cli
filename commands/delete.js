@@ -1,33 +1,42 @@
-const { prompt } = require('inquirer')
-const { writeFile } = require('fs')
-const { listTable } = require(`${__dirname}/../utils`)
-
+const { prompt } = require("inquirer")
+const { writeFile } = require("fs")
+const { listTable } = require("../utils/listTable")
+var List = require("prompt-list")
+var deletedir = require("../utils/deleteDir")
 let tplList = require(`${__dirname}/../templates`)
+const chalk = require("chalk")
+var logger = require("../utils/logger")
 
-const question = [
-  {
-    type: 'input',
-    name: 'name',
-    message: 'Which template you want to delete:',
-    validate (val) {
-      if (tplList[val]) {
-        return true
-      } else if (val === '') {
-        return 'Name is required!'
-      } else if (!tplList[val]) {
-        return 'This template doesn\'t exists.'
+var enquirer = new List({
+  name: "Templates",
+  type: "list",
+  message: "请选择你要删除的模板名?",
+  choices: Object.values(tplList)
+})
+module.exports = enquirer.run().then(function(answers) {
+  if (answers) {
+    var answersArray = [
+      {
+        type: "confirm",
+        name: "deleteName",
+        message: `确定要删除该模板吗?(${answers})`,
+        default: true
       }
-    }
+    ]
+    prompt(answersArray).then(obj => {
+      if (obj.deleteName) {
+        for (let key in tplList) {
+          if (tplList[key] === answers) deletedir(key, answers)
+        }
+      } else {
+        console.log()
+        console.log(chalk.green("取消成功!"))
+        console.log()
+      }
+    })
+  } else {
+    console.log()
+    logger.error("没有要删除的模板")
+    console.log()
   }
-]
-
-module.exports = prompt(question).then(({ name }) => {
-  delete tplList[name]
-
-  writeFile(`${__dirname}/../templates.json`, JSON.stringify(tplList), 'utf-8', (err) => {
-    if (err) {
-      console.log(err)
-    }
-    listTable(tplList, 'Template has been deleted successfully!')
-  })
 })

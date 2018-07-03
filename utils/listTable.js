@@ -1,18 +1,17 @@
-const Table = require('cli-table')
-const chalk = require('chalk')
+const Table = require("cli-table")
+const chalk = require("chalk")
 
 const table = new Table({
-  head: ['Template Name', 'Owner/Name', 'Branch'],
+  head: ["orderNum", "Frame", "templateName"],
   style: {
-    head: ['green']
+    head: ["green"]
   }
 })
-
-function listTable (tplList, lyric) {
+module.exports = function listTable(tplList, name, lyric) {
   const list = Object.keys(tplList)
   if (list.length) {
-    list.forEach((key) => {
-      table.push([key, tplList[key]['owner/name'], tplList[key]['branch']])
+    list.forEach((key, index) => {
+      table.push([index + 1, name, tplList[key]])
       if (table.length === list.length) {
         console.log(table.toString())
         if (lyric) {
@@ -29,5 +28,3 @@ function listTable (tplList, lyric) {
     process.exit()
   }
 }
-
-exports.listTable = listTable

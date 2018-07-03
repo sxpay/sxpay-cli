@@ -1,52 +1,17 @@
-const { prompt } = require('inquirer')
-const { writeFile } = require('fs')
-const { listTable } = require(`${__dirname}/../utils`)
+const { prompt } = require("inquirer")
+var getTemp = require("../utils/getTemp")
+var getDir = require("../utils/getDir")
+var program = require("commander") // node操作命令
+var getAnswersArray = require("../utils/getAnswersArray")
+var logger = require("../utils/logger")
 
-let tplList = require(`${__dirname}/../templates`)
+if (typeof program.args[0] === "object") {
+  logger.error("命令使用错误， 用法: sxpay add <app-frame>")
+  return
+}
+var question = getAnswersArray(program.args[0])
 
-const question = [
-  {
-    type: 'input',
-    name: 'name',
-    message: 'Set the custom name of the template:',
-    validate (val) {
-      if (tplList[val]) {
-        return 'Template is existed!'
-      } else if (val === '') {
-        return 'Name is required!'
-      } else {
-        return true
-      }
-    }
-  },
-  {
-    type: 'input',
-    name: 'place',
-    message: 'Owner/name of the template:',
-    validate (val) {
-      if (val !== '') {
-        return true
-      }
-      return 'Link is required!'
-    }
-  },
-  {
-    type: 'input',
-    name: 'branch',
-    message: 'Branch of the template:',
-    default: 'master'
-  }
-]
-
-module.exports = prompt(question).then(({ name, place, branch }) => {
-  tplList[name] = {}
-  tplList[name]['owner/name'] = place
-  tplList[name]['branch'] = branch
-
-  writeFile(`${__dirname}/../templates.json`, JSON.stringify(tplList), 'utf-8', (err) => {
-    if (err) {
-      console.log(err)
-    }
-    listTable(tplList, 'New template has been added successfully!')
-  })
+module.exports = prompt(question).then(obj => {
+  let template = getTemp(program.args[0], obj)
+  getDir(template, program.args[0])
 })
