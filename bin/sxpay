@@ -3,18 +3,18 @@
 process.env.NODE_PATH = __dirname + "/../node_modules/"
 
 const { resolve } = require("path")
-
+const getVersions = require("../utils/getVersions")
 const res = command => resolve(__dirname, "../commands/", command)
-
 const program = require("commander")
-
+const chalk = require("chalk")
+const path = require("path")
 program.version(require("../package").version)
 
 program.usage("<command>")
 
 program
   .command("add")
-  .description("Add a new template")
+  .description("新增一个新项目模板")
   .alias("a")
   .action(() => {
     require(res("add"))
@@ -22,7 +22,7 @@ program
 
 program
   .command("list")
-  .description("List all the templates")
+  .description("列出所有项目模板")
   .alias("l")
   .action(() => {
     require(res("list"))
@@ -30,15 +30,36 @@ program
 
 program
   .command("init")
-  .description("Generate a new project")
+  .description("初始项目")
   .alias("i")
   .action(() => {
-    require(res("init"))
+    latest()
   })
-
+// 获取当前版本与最新版本的对比
+async function latest(params) {
+  let latestVersions = await getVersions()
+  let isNewer = require("../package").version === latestVersions.latest
+  console.log()
+  if (!isNewer) {
+    console.log(chalk.yellow("A newer version of sxpay-cli is available."))
+  }
+  console.log()
+  console.log()
+  console.log(`latest:    ${chalk.green(latestVersions.latest)}`)
+  console.log(
+    `installed:    ${
+      !isNewer
+        ? chalk.red(`${require("../package").version}`)
+        : chalk.green(`${latestVersions.latest}`)
+    }`
+  )
+  console.log()
+  console.log()
+  require(res("init"))
+}
 program
   .command("delete")
-  .description("Delete a template")
+  .description("删除一个模板")
   .alias("d")
   .action(() => {
     require(res("delete"))
@@ -56,4 +77,12 @@ program.parse(process.argv)
 
 if (!program.args.length) {
   program.help()
+} else {
+  execTask(program.args[0])
+}
+
+function execTask(cmd) {
+  // console.log(
+  //   chalk.bold.bgRed(" ADAI CLI v" + require("../package").version + " ")
+  // )
 }
